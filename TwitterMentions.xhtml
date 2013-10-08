@@ -80,7 +80,7 @@
 	</head>
 	<body>
 		
-		<div style="dislay: block;">
+		<div style="padding: 10px; dislay: block;">
 			<xf:trigger>
 				<xf:label>Retrieve my twitter mentions</xf:label>
 				<xf:action ev:event="DOMActivate">
@@ -90,28 +90,30 @@
 		</div>
 		
 		<xf:group ref="instance('main-instance')[instance('oAuthResponse-instance')/object]">
-				
-		<div style="dislay: block;">
-		
-			<xf:select1 ref="filterTwitterUser">
-				<xf:label>Filter by twitter user:</xf:label>
-				<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
-					<xf:label ref="name"/>
-					<xf:value ref="screen__name"/>
-				</xf:itemset>			
-			</xf:select1>
+					
+			<div style="padding: 10px; dislay: block;">
 			
-		</div>
-	
-		</xf:group>
+				<xf:select1 ref="filterTwitterUser" incremental="true">
+					<xf:label>Filter by twitter user:</xf:label>
+					<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
+						<xf:label ref="name"/>
+						<xf:value ref="screen__name"/>
+					</xf:itemset>			
+				</xf:select1>
+				
+			</div>
+				
+			<h2>Tweets:</h2>
+			
+			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
+			
+				<p style="padding: 10px;">
+					<xf:output ref="text"/>
+				</p>
+			
+			</xf:repeat>
 		
-		<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
-		
-			<p>
-				<xf:output ref="text"/>
-			</p>
-		
-		</xf:repeat>
+		</xf:group>		
 	
 		<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner"/>
 				
