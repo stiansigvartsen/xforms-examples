@@ -111,13 +111,13 @@
 			
 			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
 			
-				<p style="padding: 4px; clear: both;">
+				<div style="float: left; padding: 4px; clear: both;">
 					<img style="float: left" src="{user/profile__image__url}"/>
-					<div>
+					<div style="float: left">
 						<strong><xf:output ref="created__at"/></strong><br/>
 						<xf:output ref="text"/>
 					</div>				
-				</p>
+				</div>
 			
 			</xf:repeat>
 		
