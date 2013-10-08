@@ -80,7 +80,7 @@
 	</head>
 	<body>
 		
-		<div style="padding: 10px; dislay: block;">
+		<div style="padding: 4px; dislay: block;">
 			<xf:trigger>
 				<xf:label>Retrieve my twitter mentions</xf:label>
 				<xf:action ev:event="DOMActivate">
@@ -91,10 +91,14 @@
 		
 		<xf:group ref="instance('main-instance')[instance('oAuthResponse-instance')/object]">
 					
-			<div style="padding: 10px; dislay: block;">
+			<div style="padding: 4px; dislay: block;">
 			
 				<xf:select1 ref="filterTwitterUser" incremental="true">
-					<xf:label>Filter by twitter user:</xf:label>
+				<xf:label>Filter by twitter user:</xf:label>
+					<xf:item>
+						<xf:label>-- please select --</xf:label>
+						<xf:value></xf:value>
+					</xf:item>
 					<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
 						<xf:label ref="name"/>
 						<xf:value ref="screen__name"/>
@@ -107,7 +111,7 @@
 			
 			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
 			
-				<p style="padding: 10px;">
+				<p style="padding: 4px;">
 					<xf:output ref="text"/>
 				</p>
 			
