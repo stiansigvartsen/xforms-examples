@@ -7,6 +7,12 @@
    <head>
       <title>OAuth proxy portlet test app</title>
       <xf:model id="main-model">
+         	
+         	<xf:instance id="main-instance">
+         		<root xmlns="">
+         			<filterTwitterUser/>
+         		</root>
+         	</xf:instance>
          	         	
          	<xf:instance id="themeDisplay-instance">
          		<themeDisplay xmlns=""/>
@@ -74,11 +80,11 @@
 	</head>
 	<body>
 		
-		<xf:select1 ref="instance('main-instance')/oAuthResourceURL">
-			<xf:label>Resource URL:</xf:label>
-			<xf:itemset nodeset="instance('oAuthResources-instance')/oAuthResourceURL">
-				<xf:label ref="."/>
-				<xf:value ref="."/>
+		<xf:select1 ref="instance('main-instance')/filterTwitterUser">
+			<xf:label>Filter by twitter user:</xf:label>
+			<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user">
+				<xf:label ref="name"/>
+				<xf:value ref="screen__name"/>
 			</xf:itemset>			
 		</xf:select1>
 	
