@@ -82,7 +82,7 @@
 		
 		<xf:select1 ref="instance('main-instance')/filterTwitterUser">
 			<xf:label>Filter by twitter user:</xf:label>
-			<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user">
+			<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
 				<xf:label ref="name"/>
 				<xf:value ref="screen__name"/>
 			</xf:itemset>			
