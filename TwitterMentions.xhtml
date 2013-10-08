@@ -80,20 +80,30 @@
 	</head>
 	<body>
 		
-		<xf:select1 ref="instance('main-instance')/filterTwitterUser">
-			<xf:label>Filter by twitter user:</xf:label>
-			<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
-				<xf:label ref="name"/>
-				<xf:value ref="screen__name"/>
-			</xf:itemset>			
-		</xf:select1>
+		<div style="dislay: block;">
+			<xf:trigger>
+				<xf:label>Retrieve my twitter mentions</xf:label>
+				<xf:action ev:event="DOMActivate">
+					<xf:send submission="getOAuthResource"/>
+				</xf:action>
+			</xf:trigger>
+		</div>
+		
+		<xf:group ref="instance('main-instance')[instance('oAuthResponse-instance')/object]">
+				
+		<div style="dislay: block;">
+		
+			<xf:select1 ref="filterTwitterUser">
+				<xf:label>Filter by twitter user:</xf:label>
+				<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
+					<xf:label ref="name"/>
+					<xf:value ref="screen__name"/>
+				</xf:itemset>			
+			</xf:select1>
+			
+		</div>
 	
-		<xf:trigger>
-			<xf:label>Request OAuth resource</xf:label>
-			<xf:action ev:event="DOMActivate">
-				<xf:send submission="getOAuthResource"/>
-			</xf:action>
-		</xf:trigger>
+		</xf:group>
 	
 		<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner"/>
 				
