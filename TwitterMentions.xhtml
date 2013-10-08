@@ -107,15 +107,18 @@
 				
 			</div>
 				
-			<h2>Tweets:</h2>
-			
-			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
-			
-				<p style="padding: 4px;">
-					<xf:output ref="text"/>
-				</p>
-			
-			</xf:repeat>
+			<xf:group ref="string-length(filterTwitterUser gt 0)">
+				<h2>Tweets:</h2>
+				
+				<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
+				
+					<p style="padding: 4px;">
+						<img src="{user/profile__image__url}"/>"/><strong><xf:output ref="created__at"/></strong><br/>
+						<xf:output ref="text"/>						
+					</p>
+				
+				</xf:repeat>
+			</xf:group>
 		
 		</xf:group>		
 	
