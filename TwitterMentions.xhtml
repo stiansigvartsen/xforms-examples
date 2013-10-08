@@ -104,6 +104,14 @@
 		</div>
 	
 		</xf:group>
+		
+		<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
+		
+			<p>
+				<xf:output ref="text"/>
+			</p>
+		
+		</xf:repeat>
 	
 		<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner"/>
 				
