@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:xf="http://www.w3.org/2002/xforms" 
+		xmlns:xxf="http://orbeon.org/oxf/xml/xforms" 
+		xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:xs="http://www.w3.org/2001/XMLSchema">
+		
+   <head>
+      <title>OAuth proxy portlet test app</title>
+      <xf:model id="main-model">
+         	
+         	<xf:instance id="main-instance">         		
+         		<root xmlns="">
+					<oAuthResourceURL>http://api.twitter.com/1.1/statuses/mentions_timeline.json</oAuthResourceURL>
+					<oAuthResponse/>
+         		</root>         		
+         	</xf:instance>
+         	
+         	<xf:instance id="themeDisplay-instance">
+         		<themeDisplay xmlns=""/>
+         	</xf:instance>
+         	         	
+         	<xf:instance id="oAuthContext-instance">
+         		<context xmlns="">
+         			<userToken/>
+         			<oauth_callback></oauth_callback>
+         		</context>
+         	</xf:instance>
+         	
+         	<xf:instance id="oAuthResponse-instance">
+         		<json xmlns=""/>
+         	</xf:instance>
+         	
+         	<xf:instance id="oAuthResources-instance">
+         		<resources xmlns="">
+         			<oAuthResourceURL>http://api.twitter.com/1.1/statuses/mentions_timeline.json</oAuthResourceURL>
+         			<oAuthResourceURL>http://api.twitter.com/1.1/search/tweets.json?q=%23superbowl&amp;result_type=recent</oAuthResourceURL>
+         			<oAuthResourceURL>http://localhost:8080/api/secure/jsonws/portal/get-build-number</oAuthResourceURL>         			
+         		</resources>
+         	</xf:instance>
+         	         	
+         	<xf:action ev:event="xforms-ready"> 
+	         	<xf:setvalue     		
+  					ref="instance('oAuthContext-instance')/userToken"
+  					value="xxf:get-request-attribute('userToken', 'text/plain')"/>
+	         	<xf:setvalue
+  					ref="instance('oAuthContext-instance')/oauth_callback"
+  					value="xxf:get-request-attribute('oauth_callback', 'text/plain')"/>
+  					
+				<xf:insert
+				  ref="instance('themeDisplay-instance')"
+				  origin="xxf:get-request-attribute('themeDisplayXML')"/>
+	  				
+			</xf:action>
+
+         	<xf:submission id="getOAuthResource"
+         		resource="{instance('main-instance')/oAuthResourceURL}" 
+         		method="get"
+				serialization="none" 
+         		replace="instance" 
+           		instance="oAuthResponse-instance">
+
+           		<xf:header combine="replace">
+           			<xf:name>userToken</xf:name>
+					<xf:value value="instance('oAuthContext-instance')/userToken"/>
+           		</xf:header>
+
+           		<xf:header combine="replace">
+           			<xf:name>oauth_callback</xf:name>
+           			<xf:value value="instance('oAuthContext-instance')/oauth_callback"/>
+           		</xf:header>
+           		
+           		<xf:header combine="replace">
+           			<xf:name>transform-response-to</xf:name>
+           			<xf:value>xml</xf:value>
+           		</xf:header>
+           		
+           		<xf:action ev:event="xforms-submit-done" if="instance('oAuthResponse-instance')/authorisation_needed">
+           			<xf:load resource="{instance('oAuthResponse-instance')/authorisation_needed/url}" show="replace"/>
+           		</xf:action>
+           		
+           		<xf:action ev:event="xforms-submit-error">           		
+           			<xf:message ref="concat('Failed to request resource (HTTP ', event('response-status-code'), ')')"/>           		       	           		
+           		</xf:action>
+           		
+         	</xf:submission>         	 
+         	
+      </xf:model>
+            
+	</head>
+	<body>
+		
+		<xf:select1 ref="instance('main-instance')/oAuthResourceURL">
+			<xf:label>Resource URL:</xf:label>
+			<xf:itemset nodeset="instance('oAuthResources-instance')/oAuthResourceURL">
+				<xf:label ref="."/>
+				<xf:value ref="."/>
+			</xf:itemset>			
+		</xf:select1>
+	
+		<xf:trigger>
+			<xf:label>Request OAuth resource</xf:label>
+			<xf:action ev:event="DOMActivate">
+				<xf:send submission="getOAuthResource"/>
+			</xf:action>
+		</xf:trigger>
+	
+		<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner"/>
+				
+	</body>
+</html>
