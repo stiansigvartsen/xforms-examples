@@ -1,0 +1,127 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:xf="http://www.w3.org/2002/xforms" 
+		xmlns:xxf="http://orbeon.org/oxf/xml/xforms" 
+		xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:xs="http://www.w3.org/2001/XMLSchema">
+		
+   <head>
+      <title>OAuth proxy portlet test app</title>
+      <xf:model id="main-model">
+         	
+         	<xf:instance id="main-instance">
+         		<root xmlns="">
+         			<filterTwitterUser/>
+         		</root>
+         	</xf:instance>
+         	         	
+         	<xf:instance id="themeDisplay-instance">
+         		<themeDisplay xmlns=""/>
+         	</xf:instance>
+         	         	
+         	<xf:instance id="oAuthContext-instance">
+         		<context xmlns="">
+         			<userToken/>
+         			<oauth_callback></oauth_callback>
+         		</context>
+         	</xf:instance>
+         	
+         	<xf:instance id="oAuthResponse-instance">
+         		<json xmlns=""/>
+         	</xf:instance>
+         	         	
+         	<xf:action ev:event="xforms-ready"> 
+	         	<xf:setvalue     		
+  					ref="instance('oAuthContext-instance')/userToken"
+  					value="xxf:get-request-attribute('userToken', 'text/plain')"/>
+	         	<xf:setvalue
+  					ref="instance('oAuthContext-instance')/oauth_callback"
+  					value="xxf:get-request-attribute('oauth_callback', 'text/plain')"/>
+  					
+				<xf:insert
+				  ref="instance('themeDisplay-instance')"
+				  origin="xxf:get-request-attribute('themeDisplayXML')"/>
+				  
+				<xf:send submission="getOAuthResource"/>
+	  				
+			</xf:action>
+
+         	<xf:submission id="getOAuthResource"
+         		resource="http://api.twitter.com/1.1/statuses/mentions_timeline.json" 
+         		method="get"
+				serialization="none" 
+         		replace="instance" 
+           		instance="oAuthResponse-instance">
+
+           		<xf:header combine="replace">
+           			<xf:name>userToken</xf:name>
+					<xf:value value="instance('oAuthContext-instance')/userToken"/>
+           		</xf:header>
+
+           		<xf:header combine="replace">
+           			<xf:name>oauth_callback</xf:name>
+           			<xf:value value="instance('oAuthContext-instance')/oauth_callback"/>
+           		</xf:header>
+           		
+           		<xf:header combine="replace">
+           			<xf:name>transform-response-to</xf:name>
+           			<xf:value>xml</xf:value>
+           		</xf:header>
+           		
+           		<xf:action ev:event="xforms-submit-error">           		
+           			<xf:message ref="concat('Failed to request resource (HTTP ', event('response-status-code'), ')')"/>           		       	           		
+           		</xf:action>
+           		
+         	</xf:submission>         	 
+         	
+      </xf:model>
+            
+	</head>
+	<body>
+		
+		<div style="padding: 4px; dislay: block;">
+			<xf:trigger ref="instance('oAuthResponse-instance')/authorisation_needed">
+				<xf:label>Authorise session to Twitter account</xf:label>
+				<xf:action ev:event="DOMActivate">
+					<xf:load resource="{instance('oAuthResponse-instance')/authorisation_needed/url}" show="replace"/>
+				</xf:action>
+			</xf:trigger>
+		</div>		
+		
+		<xf:group ref="instance('main-instance')[instance('oAuthResponse-instance')/object]">
+					
+			<div style="padding: 4px; dislay: block;">
+			
+				<xf:select1 ref="filterTwitterUser" incremental="true">
+				<xf:label>Filter by twitter user:</xf:label>
+					<xf:item>
+						<xf:label>-- please select --</xf:label>
+						<xf:value></xf:value>
+					</xf:item>
+					<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
+						<xf:label ref="name"/>
+						<xf:value ref="screen__name"/>
+					</xf:itemset>			
+				</xf:select1>
+				
+			</div>
+				
+			<h2>Tweets:</h2>
+			
+			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
+			
+				<div style="float: left; padding: 4px; clear: both;">
+					<img style="float: left" src="{user/profile__image__url}"/>
+					<div style="float: left">
+						<strong><xf:output ref="created__at"/></strong><br/>
+						<xf:output ref="text"/>
+					</div>				
+				</div>
+			
+			</xf:repeat>
+		
+		</xf:group>		
+	
+		<fr:xforms-inspector xmlns:fr="http://orbeon.org/oxf/xml/form-runner"/>
+				
+	</body>
+</html>
