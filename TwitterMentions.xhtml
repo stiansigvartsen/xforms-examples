@@ -99,7 +99,7 @@
 						<xf:label>-- please select --</xf:label>
 						<xf:value></xf:value>
 					</xf:item>
-					<xf:itemset nodeset="instance('oAuthResponse-instance')//object/user[not(screen__name = preceding-sibling::user/screen__name)]">
+					<xf:itemset nodeset="instance('oAuthResponse-instance')/object/user[not(. = ../following-sibling::object/user)]">
 						<xf:label ref="name"/>
 						<xf:value ref="screen__name"/>
 					</xf:itemset>			
@@ -109,7 +109,7 @@
 				
 			<h2>Tweets:</h2>
 			
-			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser]">
+			<xf:repeat ref="instance('oAuthResponse-instance')/object[user/screen__name = instance('main-instance')/filterTwitterUser or string-length(instance('main-instance')/filterTwitterUser) eq 0]">
 			
 				<div style="float: left; padding: 4px; clear: both;">
 					<img style="float: left" src="{user/profile__image__url}"/>
